@@ -1,0 +1,61 @@
+{
+  "pluginAlias": "AirConditionerInfraredRemote",
+  "pluginType": "accessory",
+  "schema": {
+    "name": {
+      "title": "Name",
+      "type": "string",
+      "placeholder": "Name",
+      "required": true
+    },
+    "timeout": {
+      "title": "Timeout (seconds)",
+      "type": "number",
+      "placeholder": "120",
+      "required": true
+    },
+    "beacon_port": {
+      "title": "UDP Port to listen for the IR Beacon",
+      "type": "number",
+      "placeholder": "5566",
+      "default": "5566"
+    },
+    "tx_freq": {
+      "title": "Transmission Frequency for the IR Beacon",
+      "type": "number",
+      "placeholder": "38000",
+      "default": "38000"
+    },
+    "captures": {
+      "title": "Captures",
+      "type": "object",
+      "required": true,
+      "properties": {
+        "off": {
+          "title": "Off",
+          "type": "string",
+          "placeholder": "Hex of the IR signal to turn off the AC",
+          "required": true
+        },
+        "cool": {
+          "title": "Cool",
+          "type": "string",
+          "placeholder": "Hex of the IR signal to set the AC to Cool mode",
+          "required": true
+        },
+        "heat": {
+          "title": "Heat",
+          "type": "string",
+          "placeholder": "Hex of the IR signal to set the AC to Heat mode",
+          "required": true
+        },
+        "auto": {
+          "title": "Auto",
+          "type": "string",
+          "placeholder": "Hex of the IR signal to set the AC to Auto mode",
+          "required": true
+        }
+      }
+    }
+  }
+}
