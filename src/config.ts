@@ -5,10 +5,10 @@ export interface Config extends AccessoryConfig {
     timeout: number;
     beacon_port: number;
     tx_freq: number;
-    captures: {
+    signals: {
         off: string;
-        cool: string;
-        heat: string;
-        auto: string;
+        cool: Record<string, string>;
+        heat: Record<string, string>;
+        auto: Record<string, string>;
     }
 }

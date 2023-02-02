@@ -26,8 +26,8 @@
       "placeholder": "38000",
       "default": "38000"
     },
-    "captures": {
-      "title": "Captures",
+    "signals": {
+      "title": "Signals",
       "type": "object",
       "required": true,
       "properties": {
@@ -39,21 +39,297 @@
         },
         "cool": {
           "title": "Cool",
-          "type": "string",
-          "placeholder": "Hex of the IR signal to set the AC to Cool mode",
-          "required": true
+          "type": "object",
+          "placeholder": "Hex of the IR signal to set the AC to Cool mode, mapped by temperature.",
+          "required": true,
+          "properties": {
+            "16": {
+              "title": "16&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 16 degrees",
+              "required": false
+            },
+            "17": {
+              "title": "17&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 17 degrees",
+              "required": false
+            },
+            "18": {
+              "title": "18&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 18 degrees",
+              "required": false
+            },
+            "19": {
+              "title": "19&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 19 degrees",
+              "required": false
+            },
+            "20": {
+              "title": "20&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 20 degrees",
+              "required": false
+            },
+            "21": {
+              "title": "21&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 21 degrees",
+              "required": false
+            },
+            "22": {
+              "title": "22&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 22 degrees",
+              "required": false
+            },
+            "23": {
+              "title": "23&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 23 degrees",
+              "required": false
+            },
+            "24": {
+              "title": "24&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 24 degrees",
+              "required": false
+            },
+            "25": {
+              "title": "25&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 25 degrees",
+              "required": false
+            },
+            "26": {
+              "title": "26&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 26 degrees",
+              "required": false
+            },
+            "27": {
+              "title": "27&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 27 degrees",
+              "required": false
+            },
+            "28": {
+              "title": "28&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 28 degrees",
+              "required": false
+            },
+            "29": {
+              "title": "29&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 29 degrees",
+              "required": false
+            },
+            "30": {
+              "title": "30&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Cool mode at 30 degrees",
+              "required": false
+            }
+          }
         },
         "heat": {
           "title": "Heat",
-          "type": "string",
-          "placeholder": "Hex of the IR signal to set the AC to Heat mode",
-          "required": true
+          "type": "object",
+          "placeholder": "Hex of the IR signal to set the AC to Heat mode, mapped by temperature.",
+          "required": false,
+          "properties": {
+            "16": {
+              "title": "16&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 16 degrees",
+              "required": false
+            },
+            "17": {
+              "title": "17&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 17 degrees",
+              "required": false
+            },
+            "18": {
+              "title": "18&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 18 degrees",
+              "required": false
+            },
+            "19": {
+              "title": "19&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 19 degrees",
+              "required": false
+            },
+            "20": {
+              "title": "20&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 20 degrees",
+              "required": false
+            },
+            "21": {
+              "title": "21&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 21 degrees",
+              "required": false
+            },
+            "22": {
+              "title": "22&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 22 degrees",
+              "required": false
+            },
+            "23": {
+              "title": "23&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 23 degrees",
+              "required": false
+            },
+            "24": {
+              "title": "24&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 24 degrees",
+              "required": false
+            },
+            "25": {
+              "title": "25&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 25 degrees",
+              "required": false
+            },
+            "26": {
+              "title": "26&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 26 degrees",
+              "required": false
+            },
+            "27": {
+              "title": "27&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 27 degrees",
+              "required": false
+            },
+            "28": {
+              "title": "28&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 28 degrees",
+              "required": false
+            },
+            "29": {
+              "title": "29&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 29 degrees",
+              "required": false
+            },
+            "30": {
+              "title": "30&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Heat mode at 30 degrees",
+              "required": false
+            }
+          }
         },
         "auto": {
           "title": "Auto",
-          "type": "string",
-          "placeholder": "Hex of the IR signal to set the AC to Auto mode",
-          "required": true
+          "type": "object",
+          "placeholder": "Hex of the IR signal to set the AC to Auto mode, mapped by temperature.",
+          "required": false,
+          "properties": {
+            "16": {
+              "title": "16&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 16 degrees",
+              "required": false
+            },
+            "17": {
+              "title": "17&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 17 degrees",
+              "required": false
+            },
+            "18": {
+              "title": "18&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 18 degrees",
+              "required": false
+            },
+            "19": {
+              "title": "19&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 19 degrees",
+              "required": false
+            },
+            "20": {
+              "title": "20&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 20 degrees",
+              "required": false
+            },
+            "21": {
+              "title": "21&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 21 degrees",
+              "required": false
+            },
+            "22": {
+              "title": "22&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 22 degrees",
+              "required": false
+            },
+            "23": {
+              "title": "23&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 23 degrees",
+              "required": false
+            },
+            "24": {
+              "title": "24&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 24 degrees",
+              "required": false
+            },
+            "25": {
+              "title": "25&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 25 degrees",
+              "required": false
+            },
+            "26": {
+              "title": "26&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 26 degrees",
+              "required": false
+            },
+            "27": {
+              "title": "27&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 27 degrees",
+              "required": false
+            },
+            "28": {
+              "title": "28&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 28 degrees",
+              "required": false
+            },
+            "29": {
+              "title": "29&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 29 degrees",
+              "required": false
+            },
+            "30": {
+              "title": "30&deg;C",
+              "type": "string",
+              "placeholder": "Hex of the IR signal to set the AC to Auto mode at 30 degrees",
+              "required": false
+            }
+          }
         }
       }
     }
