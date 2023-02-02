@@ -140,7 +140,7 @@ class AirConditionerInfraredRemote implements AccessoryPlugin {
             const cmd = this.commandQueue[0];
 
             let [signal, state] = this.selectClosestTemperature(cmd);
-            let buf = Buffer.alloc(0);
+            let buf = Buffer.alloc(2 + (signal.length / 2));
             buf.writeUint16LE(this.config.tx_freq);
             buf.write(signal, 2, "hex");
 

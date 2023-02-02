@@ -12,7 +12,7 @@
       "title": "Timeout (seconds)",
       "type": "number",
       "placeholder": "120",
-      "required": true
+      "default": "120"
     },
     "beacon_port": {
       "title": "UDP Port to listen for the IR Beacon",
