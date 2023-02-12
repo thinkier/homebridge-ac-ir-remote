@@ -46,7 +46,7 @@ class AirConditionerInfraredRemote implements AccessoryPlugin {
     private readonly informationService: Service;
     private readonly timeout: number;
     private readonly thermostatService: Service;
-    private readonly extraServices: Service[];
+    private readonly extraServices: Service[] = [];
 
     private readonly acCommandQueue: AcCommand[] = [{
         state: {mode: "off"}, callback: () => {
