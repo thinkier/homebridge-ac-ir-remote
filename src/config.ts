@@ -10,5 +10,11 @@ export interface Config extends AccessoryConfig {
         cool: Record<string, string>;
         heat: Record<string, string>;
         auto: Record<string, string>;
-    }
+    };
+    enable_repeat: boolean;
+    extras: {
+        name: string,
+        tx_freq: number,
+        hex: string
+    }[];
 }

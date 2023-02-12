@@ -2,7 +2,8 @@ import {
     AccessoryPlugin,
     API, Characteristic,
     CharacteristicEventTypes,
-    CharacteristicGetCallback, CharacteristicValue,
+    CharacteristicGetCallback,
+    CharacteristicValue,
     HAP,
     HAPStatus,
     Logging,
@@ -29,8 +30,15 @@ interface Metrics {
 }
 
 interface Command {
-    state: State,
     callback: (successful: boolean) => void
+}
+
+interface AcCommand extends Command {
+    state: State
+}
+
+interface GenericCommand extends Command {
+    buffer: Buffer
 }
 
 class AirConditionerInfraredRemote implements AccessoryPlugin {
@@ -38,11 +46,14 @@ class AirConditionerInfraredRemote implements AccessoryPlugin {
     private readonly informationService: Service;
     private readonly timeout: number;
     private readonly thermostatService: Service;
+    private readonly extraServices: Service[];
 
-    private readonly commandQueue: Command[] = [{
+    private readonly acCommandQueue: AcCommand[] = [{
         state: {mode: "off"}, callback: () => {
         }
     }];
+    private readonly genericCommandQueue: GenericCommand[] = [];
+
     private readonly udp_server: dgram.Socket;
     private desiredState: State = {mode: "off"};
     private actualState: State = {mode: "off"};
@@ -54,8 +65,27 @@ class AirConditionerInfraredRemote implements AccessoryPlugin {
 
         this.informationService = new hap.Service.AccessoryInformation()
             .setCharacteristic(hap.Characteristic.Manufacturer, "ACME Pty Ltd");
-        this.thermostatService = new hap.Service.Thermostat(this.name)
-            .setCharacteristic(hap.Characteristic.TemperatureDisplayUnits, hap.Characteristic.TemperatureDisplayUnits.CELSIUS)
+        this.thermostatService = new hap.Service.Thermostat(this.name);
+        this.implementThermostat();
+        this.implementExtraServices();
+        if(config.enable_repeat) {
+            this.implementRepeat();
+        }
+
+        this.timeout = (config.timeout ?? 30) * 1e3;
+
+        this.udp_server = dgram.createSocket("udp4");
+        this.udp_server.bind(config.beacon_port);
+        this.udp_server.on("listening", () => {
+            log.info("Listening on port %d", config.beacon_port);
+        });
+        this.udp_server.on("message", this.messageHandler);
+
+        log.info(`${this.config.name} finished initializing!`);
+    }
+
+    private implementThermostat() {
+        this.thermostatService.setCharacteristic(hap.Characteristic.TemperatureDisplayUnits, hap.Characteristic.TemperatureDisplayUnits.CELSIUS)
             .setCharacteristic(hap.Characteristic.CurrentTemperature, 22)
             .setCharacteristic(hap.Characteristic.CurrentRelativeHumidity, 50)
             .setCharacteristic(hap.Characteristic.CurrentHeatingCoolingState, hap.Characteristic.CurrentHeatingCoolingState.OFF)
@@ -84,7 +114,7 @@ class AirConditionerInfraredRemote implements AccessoryPlugin {
                     this.desiredState.temperature = t as number;
                 }
 
-                this.commandQueue.push({
+                this.acCommandQueue.push({
                     state: {...this.desiredState},
                     callback: () => {
                         cb(HAPStatus.SUCCESS);
@@ -107,37 +137,92 @@ class AirConditionerInfraredRemote implements AccessoryPlugin {
                     this.desiredState.mode = desiredMode;
                 }
 
-                this.commandQueue.push({
+                this.acCommandQueue.push({
                     state: {...this.desiredState},
                     callback: () => {
                         cb(HAPStatus.SUCCESS);
                     }
                 })
             });
+    }
 
-        this.timeout = (config.timeout ?? 30) * 1e3;
+    private implementExtraServices() {
+        for (let extra of this.config.extras ?? []) {
+            let service = new hap.Service.Switch(extra.name);
 
-        this.udp_server = dgram.createSocket("udp4");
-        this.udp_server.bind(config.beacon_port);
-        this.udp_server.on("listening", () => {
-            log.info("Listening on port %d", config.beacon_port);
-        });
-        this.udp_server.on("message", this.messageHandler);
+            service.getCharacteristic(hap.Characteristic.On)
+                .on("get", this.getCharacteristic(false))
+                .on("set", (on, cb) => {
+                    if (!on) {
+                        cb(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE);
+                        return;
+                    }
 
-        log.info(`${this.config.name} finished initializing!`);
+                    const buffer = Buffer.alloc((extra.hex.length / 2) + 2);
+                    buffer.writeUint16LE(extra.tx_freq);
+                    buffer.write(extra.hex, 2, "hex");
+
+                    this.genericCommandQueue.push({
+                        callback: () => {
+                            cb(HAPStatus.SUCCESS);
+                            service.setCharacteristic(hap.Characteristic.On, false);
+                        },
+                        buffer
+                    });
+                })
+
+            this.extraServices.push(service);
+        }
+    }
+
+    private implementRepeat() {
+        let service = new hap.Service.Switch("Repeat AC Command");
+        service.getCharacteristic(hap.Characteristic.On)
+            .on("get", this.getCharacteristic(false))
+            .on("set", (on, cb) => {
+                if(!on || this.acCommandQueue.length !== 0){
+                    cb(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE);
+                    return;
+                }
+
+                this.acCommandQueue.push({
+                    state: {...this.desiredState},
+                    callback: () => {
+                        cb(HAPStatus.SUCCESS);
+                        service.setCharacteristic(hap.Characteristic.On, false);
+                    }
+                })
+            });
+        this.extraServices.push(service);
     }
 
     private messageHandler = (msg: Buffer, rinfo: dgram.RemoteInfo) => {
         this.log(`Received message from ${rinfo.address}:${rinfo.port}`);
         this.last_updated = Date.now();
 
-        this.commandQueue.reverse();
-        while (this.commandQueue.length > 1) {
-            this.commandQueue.pop().callback(false);
+        if (this.acCommandQueue.length === 0) {
+            this.executeGenericCommand(rinfo);
+        } else {
+            this.executeAcCommand(rinfo);
+        }
+    }
+
+    private executeGenericCommand(rinfo: dgram.RemoteInfo) {
+        if (this.genericCommandQueue.length > 0) {
+            const cmd = this.genericCommandQueue.shift();
+            this.udp_server.send(cmd.buffer, rinfo.port, rinfo.address);
+            cmd.callback(true);
+        }
+    }
+
+    private executeAcCommand(rinfo: dgram.RemoteInfo) {
+        this.acCommandQueue.reverse();
+        while (this.acCommandQueue.length > 1) {
+            this.acCommandQueue.pop().callback(false);
         }
 
-        if (this.commandQueue.length >= 1) {
-            const cmd = this.commandQueue[0];
+        if (this.acCommandQueue.length >= 1) {
+            const cmd = this.acCommandQueue[0];
 
             let [signal, state] = this.selectClosestTemperature(cmd);
             let buf = Buffer.alloc(2 + (signal.length / 2));
@@ -149,7 +234,7 @@ class AirConditionerInfraredRemote implements AccessoryPlugin {
         }
     }
 
-    private selectClosestTemperature(cmd: Command): [string, State] {
+    private selectClosestTemperature(cmd: AcCommand): [string, State] {
         let signal, state;
         if (cmd.state.mode !== "off") {
             const {mode, temperature} = cmd.state;
@@ -224,7 +309,8 @@ class AirConditionerInfraredRemote implements AccessoryPlugin {
     getServices(): Service[] {
         return [
             this.informationService,
-            this.thermostatService
+            this.thermostatService,
+            ...this.extraServices
         ];
     }
 }

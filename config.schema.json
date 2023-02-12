@@ -332,6 +332,38 @@
           }
         }
       }
+    },
+    "enable_repeat": {
+      "title": "Expose a 'repeat signal' button",
+      "type": "boolean",
+      "default": false
+    },
+    "extras": {
+      "title": "Extra programmable signals (via a Switch)",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "placeholder": "Name of the signal",
+            "required": true
+          },
+          "tx_freq": {
+            "title": "Transmission Frequency for the IR signal",
+            "type": "number",
+            "placeholder": "Frequency of the IR signal",
+            "required": true
+          },
+          "hex": {
+            "title": "Hex",
+            "type": "string",
+            "placeholder": "Hex of the IR signal",
+            "required": true
+          }
+        }
+      }
     }
   }
 }
